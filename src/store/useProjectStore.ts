@@ -1,6 +1,9 @@
 import { create } from 'zustand';
 import type { Project } from '../domain/project';
+import type { ComponentDocumentation, PageDocumentation } from '../domain/documentation';
 import {
+  addComponent as addComponentRecord,
+  addPage as addPageRecord,
   createProject as createProjectRecord,
   deleteProject as deleteProjectRecord,
   duplicateProject as duplicateProjectRecord,
@@ -8,6 +11,8 @@ import {
   listProjects,
   renameProject as renameProjectRecord,
   seedSampleProject,
+  updateComponentDocumentation as updateComponentDocumentationRecord,
+  updatePageDocumentation as updatePageDocumentationRecord,
   updateProject as updateProjectRecord,
 } from '../services/storage';
 import type { CreateProjectInput } from '../services/storage';
@@ -26,6 +31,18 @@ interface ProjectStoreState {
   updateProject: (project: Project) => Promise<Project>;
   importProject: (jsonText: string) => Promise<Project>;
   createSampleProject: () => Promise<Project>;
+  addPage: (projectId: string, name: string) => Promise<Project>;
+  addComponent: (projectId: string, name: string) => Promise<Project>;
+  updatePageDoc: (
+    projectId: string,
+    pageId: string,
+    patch: Partial<PageDocumentation>,
+  ) => Promise<Project>;
+  updateComponentDoc: (
+    projectId: string,
+    componentId: string,
+    patch: Partial<ComponentDocumentation>,
+  ) => Promise<Project>;
 }
 
 function upsert(projects: Project[], project: Project): Project[] {
@@ -90,10 +107,56 @@ export const useProjectStore = create<ProjectStoreState>((set) => ({
     set((state) => ({ projects: upsert(state.projects, project) }));
     return project;
   },
+
+  addPage: async (projectId, name) => {
+    const project = await addPageRecord(projectId, name);
+    set((state) => ({ projects: upsert(state.projects, project) }));
+    return project;
+  },
+
+  addComponent: async (projectId, name) => {
+    const project = await addComponentRecord(projectId, name);
+    set((state) => ({ projects: upsert(state.projects, project) }));
+    return project;
+  },
+
+  updatePageDoc: async (projectId, pageId, patch) => {
+    const project = await updatePageDocumentationRecord(projectId, pageId, patch);
+    set((state) => ({ projects: upsert(state.projects, project) }));
+    return project;
+  },
+
+  updateComponentDoc: async (projectId, componentId, patch) => {
+    const project = await updateComponentDocumentationRecord(projectId, componentId, patch);
+    set((state) => ({ projects: upsert(state.projects, project) }));
+    return project;
+  },
 }));
 
 export function useProject(id: string | undefined): Project | undefined {
   return useProjectStore((state) => state.projects.find((project) => project.id === id));
+}
+
+export function usePageDoc(
+  projectId: string | undefined,
+  pageId: string | undefined,
+): PageDocumentation | undefined {
+  return useProjectStore((state) =>
+    state.projects
+      .find((project) => project.id === projectId)
+      ?.pageDocs.find((doc) => doc.pageId === pageId),
+  );
+}
+
+export function useComponentDoc(
+  projectId: string | undefined,
+  componentId: string | undefined,
+): ComponentDocumentation | undefined {
+  return useProjectStore((state) =>
+    state.projects
+      .find((project) => project.id === projectId)
+      ?.components.find((component) => component.id === componentId),
+  );
 }
 
 /** Exposed for tests that need to await store hydration outside a component. */

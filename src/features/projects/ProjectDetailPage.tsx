@@ -12,19 +12,19 @@ import {
   EmptyState,
   IconButton,
   Input,
+  SaveStatusIndicator,
   Skeleton,
   Textarea,
 } from '../../components/ui';
+import type { SaveStatus } from '../../components/ui';
 import { useToast } from '../../components/ui/Toast';
 import { useProject, useProjectStore } from '../../store/useProjectStore';
 import { projectDetailsSchema } from '../../schemas/project.schema';
 import type { ProjectDetailsFormValues } from '../../schemas/project.schema';
 import { serializeProject } from '../../services/storage';
 import type { Project } from '../../domain/project';
-import { cn } from '../../utils/cn';
+import { DocStatusBadge } from '../workspace/DocStatusBadge';
 import styles from './ProjectDetailPage.module.css';
-
-type SaveStatus = 'idle' | 'saving' | 'saved' | 'unsaved';
 
 const AUTOSAVE_DELAY_MS = 800;
 
@@ -46,27 +46,6 @@ function formatDate(iso: string) {
     dateStyle: 'medium',
     timeStyle: 'short',
   });
-}
-
-function SaveStatusIndicator({ status }: { status: SaveStatus }) {
-  if (status === 'idle') return null;
-
-  const label =
-    status === 'saving' ? 'Saving…' : status === 'saved' ? 'Saved locally' : 'Unsaved changes';
-
-  return (
-    <span className={styles.saveStatus}>
-      <span
-        className={cn(
-          styles.saveStatusDot,
-          status === 'saved' && styles.saveStatusDotSaved,
-          status === 'unsaved' && styles.saveStatusDotUnsaved,
-        )}
-        aria-hidden="true"
-      />
-      {label}
-    </span>
-  );
 }
 
 export function ProjectDetailPage() {
@@ -214,12 +193,27 @@ export function ProjectDetailPage() {
     }
   };
 
+  const tokenCount = project.components.reduce(
+    (sum, component) => sum + component.tokens.length,
+    0,
+  );
+  const interactionCount = project.pageDocs.reduce((sum, doc) => sum + doc.interactions.length, 0);
+  const openQuestionCount =
+    project.pageDocs.reduce(
+      (sum, doc) => sum + doc.openQuestions.filter((q) => q.status === 'open').length,
+      0,
+    ) +
+    project.components.reduce(
+      (sum, component) => sum + component.openQuestions.filter((q) => q.status === 'open').length,
+      0,
+    );
+
   const stats = [
     { label: 'Pages', value: project.pages.length },
-    { label: 'Components', value: project.componentNames.length },
-    { label: 'Tokens', value: 0 },
-    { label: 'Interactions', value: 0 },
-    { label: 'Open questions', value: 0 },
+    { label: 'Components', value: project.components.length },
+    { label: 'Tokens', value: tokenCount },
+    { label: 'Interactions', value: interactionCount },
+    { label: 'Open questions', value: openQuestionCount },
   ];
 
   return (
@@ -334,10 +328,43 @@ export function ProjectDetailPage() {
               ) : (
                 <div className={styles.pagesList}>
                   {project.pages.map((page, index) => (
-                    <div key={page.id} className={styles.pageRow}>
+                    <NavLink
+                      key={page.id}
+                      to={`/projects/${project.id}/pages/${page.id}`}
+                      className={styles.pageRow}
+                    >
                       <span className={styles.pageIndex}>{String(index + 1).padStart(2, '0')}</span>
-                      {page.name}
-                    </div>
+                      <span className={styles.pageName}>{page.name}</span>
+                      <DocStatusBadge
+                        status={
+                          project.pageDocs.find((doc) => doc.pageId === page.id)?.status ??
+                          'not_started'
+                        }
+                      />
+                    </NavLink>
+                  ))}
+                </div>
+              )}
+            </Card>
+          </div>
+
+          <div>
+            <h2 className={styles.sectionTitle}>Components</h2>
+            <Card>
+              {project.components.length === 0 ? (
+                <p className={styles.metaText}>No components yet.</p>
+              ) : (
+                <div className={styles.pagesList}>
+                  {project.components.map((component, index) => (
+                    <NavLink
+                      key={component.id}
+                      to={`/projects/${project.id}/components/${component.id}`}
+                      className={styles.pageRow}
+                    >
+                      <span className={styles.pageIndex}>{String(index + 1).padStart(2, '0')}</span>
+                      <span className={styles.pageName}>{component.name}</span>
+                      <DocStatusBadge status={component.status} />
+                    </NavLink>
                   ))}
                 </div>
               )}

@@ -31,6 +31,18 @@ export const SamplePage = lazy(() =>
   })),
 );
 
+export const PageDocumentationView = lazy(() =>
+  import('../features/workspace/PageDocumentationView').then((module) => ({
+    default: module.PageDocumentationView,
+  })),
+);
+
+export const ComponentDocumentationView = lazy(() =>
+  import('../features/workspace/ComponentDocumentationView').then((module) => ({
+    default: module.ComponentDocumentationView,
+  })),
+);
+
 export function RouteFallback() {
   return (
     <div

@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useParams } from 'react-router-dom';
 import {
   Accessibility,
   Component,
@@ -12,6 +13,7 @@ import {
   Smartphone,
   CircleHelp,
 } from 'lucide-react';
+import { StructureTree } from '../../../features/workspace/StructureTree';
 import { cn } from '../../../utils/cn';
 import styles from './Sidebar.module.css';
 
@@ -29,11 +31,11 @@ const items = [
   { id: 'changelog', label: 'Changelog', icon: History },
 ];
 
-export function Sidebar() {
+function GenericSidebar() {
   const [active, setActive] = useState('overview');
 
   return (
-    <nav className={styles.sidebar} aria-label="Workspace sections">
+    <nav className={cn(styles.sidebar, styles.generic)} aria-label="Workspace sections">
       <span className={styles.groupLabel}>Workspace</span>
       {items.map((item) => {
         const Icon = item.icon;
@@ -53,4 +55,18 @@ export function Sidebar() {
       })}
     </nav>
   );
+}
+
+export function Sidebar() {
+  const { projectId } = useParams<{ projectId?: string }>();
+
+  if (projectId) {
+    return (
+      <nav className={styles.sidebar} aria-label="Project structure">
+        <StructureTree />
+      </nav>
+    );
+  }
+
+  return <GenericSidebar />;
 }

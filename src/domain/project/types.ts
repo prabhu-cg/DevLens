@@ -4,6 +4,8 @@
  * everything derived from it, persisted locally via IndexedDB.
  */
 
+import type { ComponentDocumentation, PageDocumentation } from '../documentation';
+
 export const PROJECT_SCHEMA_VERSION = '1.0';
 
 export type ProjectSource = 'blank' | 'sample' | 'import';
@@ -27,12 +29,15 @@ export interface Project {
   sourceFileName?: string;
   settings: ProjectSettings;
   pages: Page[];
+  /** Structured, editable documentation for each component in this project. */
+  components: ComponentDocumentation[];
+  /** Structured, editable documentation for each page, keyed by page id. */
+  pageDocs: PageDocumentation[];
   /**
-   * Names of components identified for this project. A lightweight
-   * placeholder until the documentation engine (a later phase) produces
-   * full DesignComponent records.
+   * @deprecated superseded by `components`. Kept optional so older
+   * exported/persisted projects still load; normalized away on read.
    */
-  componentNames: string[];
+  componentNames?: string[];
 }
 
 export interface Page {

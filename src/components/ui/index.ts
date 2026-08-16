@@ -16,3 +16,4 @@ export * from './Spinner';
 export * from './EmptyState';
 export * from './Skeleton';
 export * from './ProgressBar';
+export * from './SaveStatusIndicator';

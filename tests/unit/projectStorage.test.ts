@@ -92,8 +92,18 @@ describe('project storage', () => {
     expect(sample.name).toBe('FinEdge Banking Dashboard');
     expect(sample.source).toBe('sample');
     expect(sample.pages).toHaveLength(5);
-    expect(sample.componentNames).toContain('Button');
-    expect(sample.componentNames).toHaveLength(9);
+    expect(sample.pageDocs).toHaveLength(5);
+    expect(sample.components.map((component) => component.name)).toContain('Button');
+    expect(sample.components).toHaveLength(9);
+
+    const dashboardDoc = sample.pageDocs.find(
+      (doc) => doc.pageId === sample.pages.find((page) => page.name === 'Dashboard')?.id,
+    );
+    expect(dashboardDoc?.status).toBe('documented');
+
+    const buttonDoc = sample.components.find((component) => component.name === 'Button');
+    expect(buttonDoc?.status).toBe('documented');
+    expect(buttonDoc?.states.length).toBeGreaterThan(0);
   });
 
   it('imports a valid exported project as a new record', async () => {

@@ -1,6 +1,13 @@
 export type {
-  Documentation,
-  DocumentationStatus,
-  DeveloperQuestion,
-  DeveloperQuestionStatus,
+  DocStatus,
+  QuestionStatus,
+  OpenQuestion,
+  InteractionTrigger,
+  InteractionEntry,
+  ResponsiveNote,
+  ComponentPropertyType,
+  ComponentProperty,
+  ComponentState,
+  PageDocumentation,
+  ComponentDocumentation,
 } from './types';

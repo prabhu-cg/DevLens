@@ -4,7 +4,9 @@ import { MarketingLayout, NotFound } from '../components/layout';
 import { LandingPage, TermsPage } from '../features/landing';
 import {
   AppShellLayout,
+  ComponentDocumentationView,
   NewProjectPage,
+  PageDocumentationView,
   ProjectDetailPage,
   ProjectsListPage,
   RouteFallback,
@@ -40,6 +42,8 @@ export const routes: RouteObject[] = [
       { index: true, element: <ProjectsListPage /> },
       { path: 'new', element: <NewProjectPage /> },
       { path: ':projectId', element: <ProjectDetailPage /> },
+      { path: ':projectId/pages/:pageId', element: <PageDocumentationView /> },
+      { path: ':projectId/components/:componentId', element: <ComponentDocumentationView /> },
     ],
   },
 ];

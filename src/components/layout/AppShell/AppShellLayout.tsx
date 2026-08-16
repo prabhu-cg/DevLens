@@ -1,8 +1,7 @@
 import { Outlet, useParams } from 'react-router-dom';
-import { MousePointerSquareDashed } from 'lucide-react';
 import { AppShellHeader } from './AppShellHeader';
 import { Sidebar } from './Sidebar';
-import { EmptyState } from '../../ui';
+import { ContextPanel } from '../../../features/workspace/ContextPanel';
 import styles from './AppShellLayout.module.css';
 
 export function AppShellLayout() {
@@ -21,11 +20,7 @@ export function AppShellLayout() {
         </main>
         {projectId && (
           <aside className={styles.rightPanel} aria-label="Contextual details">
-            <EmptyState
-              icon={<MousePointerSquareDashed size={28} aria-hidden="true" />}
-              title="Nothing selected"
-              description="Select a component, token, or question to see its details here."
-            />
+            <ContextPanel />
           </aside>
         )}
       </div>

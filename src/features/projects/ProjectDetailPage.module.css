@@ -45,30 +45,6 @@
   flex-shrink: 0;
 }
 
-.saveStatus {
-  display: flex;
-  align-items: center;
-  gap: var(--space-2);
-  font-size: var(--font-size-small);
-  color: var(--color-text-muted);
-}
-
-.saveStatusDot {
-  width: 6px;
-  height: 6px;
-  border-radius: var(--radius-full);
-  background-color: var(--color-text-disabled);
-  flex-shrink: 0;
-}
-
-.saveStatusDotSaved {
-  background-color: var(--color-success);
-}
-
-.saveStatusDotUnsaved {
-  background-color: var(--color-warning);
-}
-
 .statsGrid {
   display: grid;
   grid-template-columns: repeat(5, 1fr);
@@ -155,6 +131,11 @@
   border-bottom: 1px solid var(--color-border);
   font-size: var(--font-size-small);
   color: var(--color-text-primary);
+  text-decoration: none;
+}
+
+.pageRow:hover {
+  color: var(--color-primary);
 }
 
 .pageRow:last-child {
@@ -164,6 +145,10 @@
 .pageIndex {
   color: var(--color-text-muted);
   font-variant-numeric: tabular-nums;
+}
+
+.pageName {
+  flex: 1;
 }
 
 @media (max-width: 900px) {
