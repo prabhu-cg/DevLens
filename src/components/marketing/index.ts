@@ -1,4 +1,12 @@
 export { Hero } from './Hero/Hero';
+export { HeroPreview } from './HeroPreview/HeroPreview';
+export { CoreProblem } from './CoreProblem/CoreProblem';
+export { ThreeCapabilities } from './ThreeCapabilities/ThreeCapabilities';
 export { WorkflowSteps } from './WorkflowSteps/WorkflowSteps';
-export { PrinciplesGrid } from './PrinciplesGrid/PrinciplesGrid';
-export { CtaBand } from './CtaBand/CtaBand';
+export { DeveloperQuestionsSection } from './DeveloperQuestionsSection/DeveloperQuestionsSection';
+export { DocumentationPreview } from './DocumentationPreview/DocumentationPreview';
+export { ReadinessSection } from './ReadinessSection/ReadinessSection';
+export { PrivacySection } from './PrivacySection/PrivacySection';
+export { SampleCta } from './SampleCta/SampleCta';
+export { Faq } from './Faq/Faq';
+export { FinalCta } from './FinalCta/FinalCta';

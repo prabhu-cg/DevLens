@@ -1,148 +1,376 @@
-import { Badge, Card, Tabs } from '../../components/ui';
-import type { Documentation, DeveloperQuestion } from '../../domain/documentation';
-import type { AuditIssue } from '../../domain/audit';
+import { useState } from 'react';
+import { Link } from 'react-router-dom';
+import { Eye } from 'lucide-react';
+import { Badge, Button, ProgressBar } from '../../components/ui';
+import { cn } from '../../utils/cn';
+import { useCreateEditableSample } from '../../hooks/useCreateEditableSample';
+import logo from '../../assets/devlens-logo.svg';
 import styles from './SamplePage.module.css';
+import {
+  accessibilityNotes,
+  changelog,
+  components,
+  developerQuestions,
+  flows,
+  interactions,
+  overviewStats,
+  pages,
+  projectName,
+  readinessBreakdown,
+  responsiveNotes,
+} from './sampleContent';
 
-const sampleDocumentation: Documentation[] = [
-  {
-    id: 'doc-1',
-    projectId: 'sample',
-    title: 'Cart quantity stepper',
-    intent:
-      'The stepper should disable the decrement control at a quantity of 1 rather than allowing removal — removal happens through the trash icon, not by stepping to zero.',
-    status: 'resolved',
-    createdAt: '2026-08-01T09:00:00.000Z',
-    updatedAt: '2026-08-03T14:00:00.000Z',
-  },
-  {
-    id: 'doc-2',
-    projectId: 'sample',
-    title: 'Empty search results',
-    intent:
-      'Show the empty state after the search debounce completes, not while results are still loading — avoids a flash of "no results" on fast typers.',
-    status: 'in_review',
-    createdAt: '2026-08-02T09:00:00.000Z',
-    updatedAt: '2026-08-04T11:00:00.000Z',
-  },
-];
+const sections = [
+  'Overview',
+  'Pages',
+  'Flows',
+  'Components',
+  'Tokens',
+  'Interactions',
+  'Responsive',
+  'Accessibility',
+  'Developer questions',
+  'Open questions',
+  'Changelog',
+] as const;
 
-const sampleQuestions: DeveloperQuestion[] = [
-  {
-    id: 'q-1',
-    projectId: 'sample',
-    question: 'Does the price update optimistically before the server confirms the new quantity?',
-    answer: 'Yes — update immediately, then reconcile if the server response differs.',
-    status: 'answered',
-    createdAt: '2026-08-02T10:00:00.000Z',
-    updatedAt: '2026-08-02T15:00:00.000Z',
-  },
-  {
-    id: 'q-2',
-    projectId: 'sample',
-    question: 'What happens if a user searches while offline?',
-    status: 'open',
-    createdAt: '2026-08-05T09:00:00.000Z',
-    updatedAt: '2026-08-05T09:00:00.000Z',
-  },
-];
+type Section = (typeof sections)[number];
 
-const sampleAuditIssues: AuditIssue[] = [
-  {
-    id: 'issue-1',
-    projectId: 'sample',
-    category: 'ambiguity',
-    severity: 'medium',
-    status: 'open',
-    summary: 'Hover state for the cart line item has no defined behaviour on touch devices.',
-    createdAt: '2026-08-05T09:00:00.000Z',
-    updatedAt: '2026-08-05T09:00:00.000Z',
-  },
-  {
-    id: 'issue-2',
-    projectId: 'sample',
-    category: 'missing_token',
-    severity: 'low',
-    status: 'acknowledged',
-    summary: 'Border radius on the promo banner does not match an existing token.',
-    createdAt: '2026-08-05T09:00:00.000Z',
-    updatedAt: '2026-08-05T09:00:00.000Z',
-  },
-];
+const openQuestions = developerQuestions.filter((question) => question.status === 'open');
 
-function DocumentationTab() {
+function OverviewSection() {
   return (
-    <div className={styles.section}>
-      {sampleDocumentation.map((doc) => (
-        <Card key={doc.id} style={{ marginBottom: 'var(--space-4)' }}>
-          <div className={styles.sectionTitle}>{doc.title}</div>
-          <p className={styles.sectionBody}>{doc.intent}</p>
-          <Badge variant={doc.status === 'resolved' ? 'success' : 'warning'}>
-            {doc.status.replace('_', ' ')}
-          </Badge>
-        </Card>
+    <>
+      <div className={styles.statsRow}>
+        {overviewStats.map((stat) => (
+          <div key={stat.label} className={styles.stat}>
+            <div className={styles.statValue}>{stat.value}</div>
+            <div className={styles.statLabel}>{stat.label}</div>
+          </div>
+        ))}
+      </div>
+      <p className={styles.docLabel}>Handoff readiness breakdown</p>
+      <div className={styles.bars} style={{ marginTop: 'var(--space-4)' }}>
+        {readinessBreakdown.map((item) => (
+          <ProgressBar key={item.label} label={item.label} value={item.value} tone="success" />
+        ))}
+      </div>
+    </>
+  );
+}
+
+function PagesSection() {
+  return (
+    <div className={styles.list}>
+      {pages.map((page) => (
+        <div key={page.name} className={styles.listItem}>
+          <div>
+            <p className={styles.itemTitle}>{page.name}</p>
+            <p className={styles.itemDescription}>{page.description}</p>
+          </div>
+        </div>
       ))}
     </div>
   );
 }
 
-function QuestionsTab() {
+function FlowsSection() {
   return (
-    <Card>
-      <ul className={styles.questionList}>
-        {sampleQuestions.map((question) => (
-          <li key={question.id} className={styles.question}>
-            <div>
-              <p className={styles.questionText}>{question.question}</p>
-              {question.answer && <p className={styles.sectionBody}>{question.answer}</p>}
-            </div>
-            <Badge variant={question.status === 'answered' ? 'success' : 'neutral'}>
-              {question.status}
-            </Badge>
-          </li>
-        ))}
-      </ul>
-    </Card>
+    <div className={styles.list}>
+      {flows.map((flow) => (
+        <div key={flow.name} className={styles.listItem}>
+          <div>
+            <p className={styles.itemTitle}>{flow.name}</p>
+            <ol className={styles.stepList}>
+              {flow.steps.map((step) => (
+                <li key={step}>{step}</li>
+              ))}
+            </ol>
+          </div>
+        </div>
+      ))}
+    </div>
   );
 }
 
-function AuditTab() {
+function ComponentsSection() {
+  const [activeIndex, setActiveIndex] = useState(0);
+  const active = components[activeIndex]!;
+
   return (
-    <Card>
-      <ul className={styles.questionList}>
-        {sampleAuditIssues.map((issue) => (
-          <li key={issue.id} className={styles.question}>
-            <p className={styles.questionText}>{issue.summary}</p>
-            <Badge variant={issue.severity === 'medium' ? 'warning' : 'neutral'}>
-              {issue.severity}
-            </Badge>
-          </li>
+    <div className={styles.componentLayout}>
+      <div className={styles.componentList}>
+        {components.map((component, index) => (
+          <button
+            key={component.name}
+            type="button"
+            className={cn(
+              styles.componentListItem,
+              index === activeIndex && styles.componentListItemActive,
+            )}
+            onClick={() => setActiveIndex(index)}
+          >
+            {component.name}
+          </button>
         ))}
-      </ul>
-    </Card>
+      </div>
+      <div>
+        <h3 className={styles.itemTitle} style={{ fontSize: 'var(--font-size-h3)' }}>
+          {active.name}
+        </h3>
+        <div className={styles.docSection}>
+          <span className={styles.docLabel}>Purpose</span>
+          <p className={styles.docBody}>{active.purpose}</p>
+        </div>
+        <div className={styles.docSection}>
+          <span className={styles.docLabel}>Variants</span>
+          <div className={styles.pillRow}>
+            {active.variants.map((variant) => (
+              <Badge key={variant} variant="neutral">
+                {variant}
+              </Badge>
+            ))}
+          </div>
+        </div>
+        <div className={styles.docSection}>
+          <span className={styles.docLabel}>States</span>
+          <div className={styles.pillRow}>
+            {active.states.map((state) => (
+              <Badge key={state} variant="neutral">
+                {state}
+              </Badge>
+            ))}
+          </div>
+        </div>
+        <div className={styles.docSection}>
+          <span className={styles.docLabel}>Behaviour</span>
+          <p className={styles.docBody}>{active.behaviour}</p>
+        </div>
+        <div className={styles.docSection}>
+          <span className={styles.docLabel}>Accessibility</span>
+          <p className={styles.docBody}>{active.accessibility}</p>
+        </div>
+        <div className={styles.docSection}>
+          <span className={styles.docLabel}>Tokens</span>
+          <div className={styles.pillRow}>
+            {active.tokens.map((token) => (
+              <code key={token} className={styles.tokenName}>
+                {token}
+              </code>
+            ))}
+          </div>
+        </div>
+      </div>
+    </div>
   );
 }
+
+function TokensSection() {
+  const allTokens = Array.from(new Set(components.flatMap((component) => component.tokens)));
+
+  return (
+    <table className={styles.tokenTable}>
+      <thead>
+        <tr>
+          <th>Token</th>
+          <th>Used by</th>
+        </tr>
+      </thead>
+      <tbody>
+        {allTokens.map((token) => (
+          <tr key={token}>
+            <td className={styles.tokenName}>{token}</td>
+            <td>
+              {components
+                .filter((component) => component.tokens.includes(token))
+                .map((component) => component.name)
+                .join(', ')}
+            </td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  );
+}
+
+function InteractionsSection() {
+  return (
+    <div className={styles.list}>
+      {interactions.map((item) => (
+        <div key={item.component + item.detail} className={styles.listItem}>
+          <div>
+            <p className={styles.itemTitle}>{item.component}</p>
+            <p className={styles.itemDescription}>{item.detail}</p>
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+function ResponsiveSection() {
+  return (
+    <div className={styles.list}>
+      {responsiveNotes.map((item) => (
+        <div key={item.area} className={styles.listItem}>
+          <div>
+            <p className={styles.itemTitle}>{item.area}</p>
+            <p className={styles.itemDescription}>{item.detail}</p>
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+function AccessibilitySection() {
+  return (
+    <div className={styles.list}>
+      {accessibilityNotes.map((note) => (
+        <div key={note} className={styles.listItem}>
+          <p className={styles.itemDescription} style={{ marginTop: 0 }}>
+            {note}
+          </p>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+function DeveloperQuestionsSectionContent() {
+  return (
+    <div className={styles.list}>
+      {developerQuestions.map((item) => (
+        <div key={item.component + item.question} className={styles.questionRow}>
+          <div>
+            <p className={styles.itemTitle}>{item.component}</p>
+            <p className={styles.itemDescription}>{item.question}</p>
+            {item.answer && (
+              <p className={styles.itemDescription} style={{ marginTop: 'var(--space-2)' }}>
+                {item.answer}
+              </p>
+            )}
+          </div>
+          <Badge variant={item.status === 'answered' ? 'success' : 'warning'}>{item.status}</Badge>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+function OpenQuestionsSection() {
+  if (openQuestions.length === 0) {
+    return <p className={styles.itemDescription}>No open questions remain.</p>;
+  }
+
+  return (
+    <div className={styles.list}>
+      {openQuestions.map((item) => (
+        <div key={item.component + item.question} className={styles.questionRow}>
+          <div>
+            <p className={styles.itemTitle}>{item.component}</p>
+            <p className={styles.itemDescription}>{item.question}</p>
+          </div>
+          <Badge variant="warning">Blocking</Badge>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+function ChangelogSection() {
+  return (
+    <div>
+      {changelog.map((item) => (
+        <div key={item.date} className={styles.changelogItem}>
+          <span className={styles.changelogDate}>{item.date}</span>
+          <span className={styles.changelogEntry}>{item.entry}</span>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+const sectionSubtitles: Record<Section, string> = {
+  Overview: 'A summary of documentation completeness for this project.',
+  Pages: 'Every page identified in the imported design.',
+  Flows: 'Multi-step user journeys documented across pages.',
+  Components: 'Structured documentation for each reusable component.',
+  Tokens: 'Design tokens referenced by documented components.',
+  Interactions: 'Behaviour captured beyond what a static frame can show.',
+  Responsive: 'How the layout adapts across breakpoints.',
+  Accessibility: 'Accessibility requirements captured during documentation.',
+  'Developer questions': 'Questions raised during documentation, answered or still open.',
+  'Open questions': 'Unresolved questions that currently block implementation.',
+  Changelog: 'A history of documentation changes for this project.',
+};
 
 export function SamplePage() {
+  const [activeSection, setActiveSection] = useState<Section>('Overview');
+  const { createEditableSample, isCreating } = useCreateEditableSample();
+
   return (
     <div className={styles.page}>
-      <div className={styles.header}>
-        <Badge variant="brand" className={styles.badge}>
-          Read-only sample
-        </Badge>
-        <h1 className={styles.title}>Checkout flow — handoff documentation</h1>
-        <p className={styles.subtitle}>
-          A worked example of what DevLens produces once a project has been documented and audited.
-          This project cannot be edited.
-        </p>
+      <div className={styles.topBar}>
+        <Link to="/" className={styles.brand}>
+          <img src={logo} alt="" className={styles.mark} />
+          <span className={styles.name}>
+            Dev<span className={styles.accent}>Lens</span>
+          </span>
+        </Link>
+        <Button size="sm" isLoading={isCreating} onClick={createEditableSample}>
+          Create editable copy
+        </Button>
       </div>
-      <Tabs
-        label="Sample documentation sections"
-        items={[
-          { value: 'documentation', label: 'Documentation', content: <DocumentationTab /> },
-          { value: 'questions', label: 'Developer questions', content: <QuestionsTab /> },
-          { value: 'audit', label: 'Audit issues', content: <AuditTab /> },
-        ]}
-      />
+
+      <div className={styles.banner} role="status">
+        <Eye size={16} className={styles.bannerIcon} aria-hidden="true" />
+        <div>
+          <span className={styles.bannerLabel}>Sample project · Read only</span>
+          <p className={styles.bannerText}>
+            This example demonstrates how a completed DevLens handoff can look.
+          </p>
+        </div>
+      </div>
+
+      <div className={styles.body}>
+        <nav className={styles.sidebar} aria-label="Sample documentation sections">
+          <span className={styles.projectName}>{projectName}</span>
+          {sections.map((section) => (
+            <button
+              key={section}
+              type="button"
+              className={cn(styles.navItem, section === activeSection && styles.navItemActive)}
+              aria-current={section === activeSection ? 'true' : undefined}
+              onClick={() => setActiveSection(section)}
+            >
+              {section}
+              {section === 'Open questions' && (
+                <span className={styles.navBadge}>{openQuestions.length}</span>
+              )}
+            </button>
+          ))}
+        </nav>
+
+        <main className={styles.content}>
+          <div className={styles.contentHeader}>
+            <h1 className={styles.contentTitle}>{activeSection}</h1>
+            <p className={styles.contentSubtitle}>{sectionSubtitles[activeSection]}</p>
+          </div>
+
+          {activeSection === 'Overview' && <OverviewSection />}
+          {activeSection === 'Pages' && <PagesSection />}
+          {activeSection === 'Flows' && <FlowsSection />}
+          {activeSection === 'Components' && <ComponentsSection />}
+          {activeSection === 'Tokens' && <TokensSection />}
+          {activeSection === 'Interactions' && <InteractionsSection />}
+          {activeSection === 'Responsive' && <ResponsiveSection />}
+          {activeSection === 'Accessibility' && <AccessibilitySection />}
+          {activeSection === 'Developer questions' && <DeveloperQuestionsSectionContent />}
+          {activeSection === 'Open questions' && <OpenQuestionsSection />}
+          {activeSection === 'Changelog' && <ChangelogSection />}
+        </main>
+      </div>
     </div>
   );
 }

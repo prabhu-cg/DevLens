@@ -13,10 +13,14 @@ test.describe('landing page', () => {
   test('navigates from the landing page to the sample documentation', async ({ page }) => {
     await page.goto('/');
 
-    await page.getByRole('link', { name: /view sample documentation/i }).click();
+    await page
+      .getByRole('link', { name: /see sample handoff/i })
+      .first()
+      .click();
 
     await expect(page).toHaveURL(/\/sample$/);
-    await expect(page.getByRole('heading', { level: 1, name: /checkout flow/i })).toBeVisible();
+    await expect(page.getByText(/sample project · read only/i)).toBeVisible();
+    await expect(page.getByRole('heading', { level: 1, name: 'Overview' })).toBeVisible();
   });
 
   test('navigates to the new project form and shows a validation error', async ({ page }) => {

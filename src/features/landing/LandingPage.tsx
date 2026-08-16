@@ -1,12 +1,33 @@
-import { Hero, WorkflowSteps, PrinciplesGrid, CtaBand } from '../../components/marketing';
+import {
+  Hero,
+  HeroPreview,
+  CoreProblem,
+  ThreeCapabilities,
+  WorkflowSteps,
+  DeveloperQuestionsSection,
+  DocumentationPreview,
+  ReadinessSection,
+  PrivacySection,
+  SampleCta,
+  Faq,
+  FinalCta,
+} from '../../components/marketing';
 
 export function LandingPage() {
   return (
     <>
       <Hero />
+      <HeroPreview />
+      <CoreProblem />
+      <ThreeCapabilities />
       <WorkflowSteps />
-      <PrinciplesGrid />
-      <CtaBand />
+      <DeveloperQuestionsSection />
+      <DocumentationPreview />
+      <ReadinessSection />
+      <PrivacySection />
+      <SampleCta />
+      <Faq />
+      <FinalCta />
     </>
   );
 }

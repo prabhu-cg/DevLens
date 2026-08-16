@@ -1,0 +1,135 @@
+.header {
+  border-bottom: 1px solid var(--color-border);
+  background-color: var(--color-background);
+}
+
+.inner {
+  padding: var(--space-3) var(--space-5);
+  display: flex;
+  align-items: center;
+  gap: var(--space-5);
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  text-decoration: none;
+  color: var(--color-text-primary);
+  flex-shrink: 0;
+}
+
+.mark {
+  width: 26px;
+  height: 20px;
+  flex-shrink: 0;
+}
+
+.accent {
+  color: var(--color-primary);
+}
+
+.name {
+  font-weight: var(--font-weight-bold);
+  font-size: var(--font-size-small);
+}
+
+.divider {
+  width: 1px;
+  height: 24px;
+  background-color: var(--color-border);
+  flex-shrink: 0;
+}
+
+.projectTrigger {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-3);
+  font-size: var(--font-size-small);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text-primary);
+  background: none;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  max-width: 220px;
+}
+
+.projectTrigger:hover {
+  background-color: var(--color-surface-sunken);
+}
+
+.projectTriggerLabel {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.search {
+  flex: 1;
+  max-width: 360px;
+}
+
+.searchInput {
+  height: 36px;
+  width: 100%;
+  padding: 0 var(--space-3) 0 var(--space-9);
+  font-size: var(--font-size-small);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background-color: var(--color-surface-sunken);
+  color: var(--color-text-primary);
+}
+
+.searchInput::placeholder {
+  color: var(--color-text-muted);
+}
+
+.searchInput:focus-visible {
+  outline: 2px solid var(--color-focus-ring);
+  outline-offset: 1px;
+}
+
+.searchWrapper {
+  position: relative;
+}
+
+.searchIcon {
+  position: absolute;
+  left: var(--space-3);
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--color-text-muted);
+  pointer-events: none;
+}
+
+.kbd {
+  position: absolute;
+  right: var(--space-2);
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: var(--font-size-caption);
+  color: var(--color-text-muted);
+  padding: 1px var(--space-1);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  background-color: var(--color-surface);
+}
+
+.spacer {
+  flex: 1;
+}
+
+.actions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  flex-shrink: 0;
+}
+
+@media (max-width: 760px) {
+  .search {
+    display: none;
+  }
+}

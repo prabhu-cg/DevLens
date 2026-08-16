@@ -16,20 +16,23 @@ function renderAt(initialPath: string) {
 }
 
 describe('routing', () => {
-  it('renders the projects list at /projects', () => {
+  it('renders the projects list at /projects', async () => {
     renderAt('/projects');
-    expect(screen.getByRole('heading', { level: 1, name: 'Projects' })).toBeInTheDocument();
+    expect(await screen.findByRole('heading', { level: 1, name: 'Projects' })).toBeInTheDocument();
   });
 
-  it('renders the new project form at /projects/new', () => {
+  it('renders the new project form at /projects/new', async () => {
     renderAt('/projects/new');
-    expect(screen.getByRole('heading', { level: 1, name: 'New project' })).toBeInTheDocument();
+    expect(
+      await screen.findByRole('heading', { level: 1, name: 'New project' }),
+    ).toBeInTheDocument();
     expect(screen.getByLabelText(/project name/i)).toBeInTheDocument();
   });
 
-  it('renders the sample documentation at /sample', () => {
+  it('renders the sample documentation at /sample', async () => {
     renderAt('/sample');
-    expect(screen.getByRole('heading', { level: 1, name: /checkout flow/i })).toBeInTheDocument();
+    expect(await screen.findByText(/sample project · read only/i)).toBeInTheDocument();
+    expect(screen.getByRole('heading', { level: 1, name: 'Overview' })).toBeInTheDocument();
   });
 
   it('renders a not-found page for an unknown route', () => {

@@ -1,8 +1,11 @@
 import { Outlet } from 'react-router-dom';
 import { Header } from '../Header/Header';
 import { Footer } from '../Footer/Footer';
+import { useHashScroll } from '../../../hooks/useHashScroll';
 
-export function AppLayout() {
+export function MarketingLayout() {
+  useHashScroll();
+
   return (
     <>
       <a href="#main-content" className="skip-link">

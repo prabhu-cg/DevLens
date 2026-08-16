@@ -6,12 +6,11 @@ import { useToast } from '../../components/ui/Toast';
 import { newProjectSchema } from '../../schemas/project.schema';
 import type { NewProjectFormValues } from '../../schemas/project.schema';
 import { useProjectStore } from '../../store/useProjectStore';
-import { generateId } from '../../utils/id';
 import styles from './NewProjectPage.module.css';
 
 export function NewProjectPage() {
   const navigate = useNavigate();
-  const addProject = useProjectStore((state) => state.addProject);
+  const createProject = useProjectStore((state) => state.createProject);
   const { showToast } = useToast();
 
   const {
@@ -20,24 +19,21 @@ export function NewProjectPage() {
     formState: { errors, isSubmitting },
   } = useForm<NewProjectFormValues>({
     resolver: zodResolver(newProjectSchema),
-    defaultValues: { name: '', description: '' },
+    defaultValues: { name: '', description: '', designer: '', version: '' },
   });
 
-  const onSubmit = (values: NewProjectFormValues) => {
-    const now = new Date().toISOString();
-    const projectId = generateId();
-
-    addProject({
-      id: projectId,
-      name: values.name,
-      description: values.description,
-      createdAt: now,
-      updatedAt: now,
-      pages: [],
-    });
-
-    showToast({ title: 'Project created', description: values.name, variant: 'success' });
-    navigate(`/projects/${projectId}`);
+  const onSubmit = async (values: NewProjectFormValues) => {
+    try {
+      const project = await createProject(values);
+      showToast({ title: 'Project created', description: project.name, variant: 'success' });
+      navigate(`/projects/${project.id}`);
+    } catch {
+      showToast({
+        title: 'Could not create project',
+        description: 'Something went wrong saving to this browser.',
+        variant: 'error',
+      });
+    }
   };
 
   return (
@@ -60,6 +56,20 @@ export function NewProjectPage() {
           error={errors.description?.message}
           {...register('description')}
         />
+        <div className={styles.row}>
+          <Input
+            label="Designer"
+            placeholder="Optional"
+            error={errors.designer?.message}
+            {...register('designer')}
+          />
+          <Input
+            label="Version"
+            placeholder="1.0"
+            error={errors.version?.message}
+            {...register('version')}
+          />
+        </div>
         <div className={styles.actions}>
           <Button type="submit" isLoading={isSubmitting}>
             Create project

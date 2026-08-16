@@ -19,19 +19,19 @@ npm run dev
 
 ## Scripts
 
-| Script                 | Description                          |
-| ----------------------- | ------------------------------------ |
-| `npm run dev`            | Start the Vite dev server            |
-| `npm run build`          | Type-check and build for production  |
-| `npm run preview`        | Preview the production build         |
-| `npm run typecheck`      | Run `tsc -b` across all projects     |
-| `npm run lint`           | Run ESLint                           |
-| `npm run lint:fix`       | Run ESLint with autofix              |
-| `npm run format`         | Format the codebase with Prettier    |
-| `npm run format:check`   | Check formatting without writing     |
-| `npm test`               | Run the Vitest unit test suite       |
-| `npm run test:watch`     | Run Vitest in watch mode             |
-| `npm run test:e2e`       | Run the Playwright e2e suite         |
+| Script                 | Description                         |
+| ---------------------- | ----------------------------------- |
+| `npm run dev`          | Start the Vite dev server           |
+| `npm run build`        | Type-check and build for production |
+| `npm run preview`      | Preview the production build        |
+| `npm run typecheck`    | Run `tsc -b` across all projects    |
+| `npm run lint`         | Run ESLint                          |
+| `npm run lint:fix`     | Run ESLint with autofix             |
+| `npm run format`       | Format the codebase with Prettier   |
+| `npm run format:check` | Check formatting without writing    |
+| `npm test`             | Run the Vitest unit test suite      |
+| `npm run test:watch`   | Run Vitest in watch mode            |
+| `npm run test:e2e`     | Run the Playwright e2e suite        |
 
 ## Project structure
 

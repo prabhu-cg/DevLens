@@ -6,9 +6,10 @@ export interface EmptyStateProps {
   title: string;
   description?: string;
   action?: ReactNode;
+  secondaryAction?: ReactNode;
 }
 
-export function EmptyState({ icon, title, description, action }: EmptyStateProps) {
+export function EmptyState({ icon, title, description, action, secondaryAction }: EmptyStateProps) {
   return (
     <div className={styles.emptyState}>
       {icon && (
@@ -18,7 +19,12 @@ export function EmptyState({ icon, title, description, action }: EmptyStateProps
       )}
       <p className={styles.title}>{title}</p>
       {description && <p className={styles.description}>{description}</p>}
-      {action && <div className={styles.action}>{action}</div>}
+      {(action || secondaryAction) && (
+        <div className={styles.action}>
+          {action}
+          {secondaryAction}
+        </div>
+      )}
     </div>
   );
 }

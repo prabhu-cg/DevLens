@@ -1,20 +1,45 @@
+import { Suspense } from 'react';
 import type { RouteObject } from 'react-router-dom';
-import { AppLayout, NotFound } from '../components/layout';
-import { LandingPage } from '../features/landing';
-import { ProjectsListPage, NewProjectPage, ProjectDetailPage } from '../features/projects';
-import { SamplePage } from '../features/documentation';
+import { MarketingLayout, NotFound } from '../components/layout';
+import { LandingPage, TermsPage } from '../features/landing';
+import {
+  AppShellLayout,
+  NewProjectPage,
+  ProjectDetailPage,
+  ProjectsListPage,
+  RouteFallback,
+  SamplePage,
+} from './lazyRoutes';
 
 export const routes: RouteObject[] = [
   {
     path: '/',
-    element: <AppLayout />,
+    element: <MarketingLayout />,
     children: [
       { index: true, element: <LandingPage /> },
-      { path: 'projects', element: <ProjectsListPage /> },
-      { path: 'projects/new', element: <NewProjectPage /> },
-      { path: 'projects/:projectId', element: <ProjectDetailPage /> },
-      { path: 'sample', element: <SamplePage /> },
+      { path: 'terms', element: <TermsPage /> },
       { path: '*', element: <NotFound /> },
+    ],
+  },
+  {
+    path: '/sample',
+    element: (
+      <Suspense fallback={<RouteFallback />}>
+        <SamplePage />
+      </Suspense>
+    ),
+  },
+  {
+    path: '/projects',
+    element: (
+      <Suspense fallback={<RouteFallback />}>
+        <AppShellLayout />
+      </Suspense>
+    ),
+    children: [
+      { index: true, element: <ProjectsListPage /> },
+      { path: 'new', element: <NewProjectPage /> },
+      { path: ':projectId', element: <ProjectDetailPage /> },
     ],
   },
 ];

@@ -15,3 +15,4 @@ export * from './Divider';
 export * from './Spinner';
 export * from './EmptyState';
 export * from './Skeleton';
+export * from './ProgressBar';

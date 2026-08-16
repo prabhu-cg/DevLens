@@ -18,7 +18,7 @@ function renderApp(initialPath = '/') {
 describe('App', () => {
   it('renders without crashing at the root route', () => {
     renderApp('/');
-    expect(screen.getByText('DevLens')).toBeInTheDocument();
+    expect(screen.getAllByRole('link', { name: 'DevLens' }).length).toBeGreaterThan(0);
   });
 
   it('renders the landing page headline', () => {

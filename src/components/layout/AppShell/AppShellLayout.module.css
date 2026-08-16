@@ -1,0 +1,31 @@
+.shell {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+}
+
+.body {
+  display: flex;
+  flex: 1;
+  min-height: 0;
+}
+
+.main {
+  flex: 1;
+  min-width: 0;
+  overflow-y: auto;
+}
+
+.rightPanel {
+  width: 280px;
+  flex-shrink: 0;
+  border-left: 1px solid var(--color-border);
+  padding: var(--space-5);
+}
+
+@media (max-width: 1100px) {
+  .rightPanel {
+    display: none;
+  }
+}

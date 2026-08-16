@@ -23,6 +23,12 @@
   gap: var(--space-5);
 }
 
+.row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-5);
+}
+
 .actions {
   display: flex;
   gap: var(--space-3);
